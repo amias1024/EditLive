@@ -77,6 +77,8 @@
         <input type="file" id="fileInput" accept=".html" onchange="loadHTML()">
         <button onclick="loadHTML()">載入HTML</button>
         <button onclick="saveHTML()">下載檔案</button>
+		<input type="file" id="imageInput" accept="image/*">
+		<button onclick="loadImage()">預覽加入圖片畫面</button>
     </div>
     <div class="main-content">
         <div class="html-preview">
@@ -89,6 +91,27 @@
 
 
     <script>
+		function loadImage() {
+			var imageInput = document.getElementById('imageInput');
+			var file = imageInput.files[0];
+			var blobUrl = URL.createObjectURL(file);
+
+			updateImageSrcInIframe(blobUrl, file.name);
+		}
+
+		function updateImageSrcInIframe(blobUrl, fileName) {
+			var htmlPreview = document.getElementById('htmlPreview');
+			var iframeDocument = htmlPreview.contentDocument || htmlPreview.contentWindow.document;
+
+			var images = iframeDocument.querySelectorAll('img');
+			images.forEach(function(img) {
+				var src = img.getAttribute('src');
+				if (src.includes(fileName)) {
+					img.src = blobUrl;
+				}
+			});
+		}
+	
         function loadHTML(fileToRead) {
             var file = fileToRead ? fileToRead : document.getElementById('fileInput').files[0];
             var reader = new FileReader();
